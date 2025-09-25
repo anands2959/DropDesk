@@ -5,17 +5,17 @@ const { createTray } = require('./tray');
 const { createDropWindow } = require('./dropWindow');
 const { FileManager } = require('./fileManager');
 
-// For macOS auto-start
+
 const appFolder = process.execPath;
 const appFolderName = path.dirname(appFolder);
 const appProcess = appFolderName.includes('node_modules') ? 'electron' : path.basename(appFolder);
 
-// App references
+
 let tray = null;
 let dropWindow = null;
 
 const isDev = process.argv.includes('--dev');
-// Use app.getPath('userData') for production to get a writable directory
+
 const dataPath = app.isPackaged 
   ? path.join(app.getPath('userData'), 'data')
   : path.join(__dirname, '..', 'data');
@@ -45,11 +45,9 @@ class DropDeskApp {
     // Get current auto-launch setting from settings
     ipcMain.handle('get-auto-launch-status', async () => {
       if (process.platform === 'darwin') {
-        // For macOS, check if app is in login items
         const loginItemSettings = app.getLoginItemSettings();
         return { enabled: loginItemSettings.openAtLogin };
       } else {
-        // For other platforms, we can use a setting
         try {
           const settings = await this.fileManager.getSettings();
           return { enabled: settings.autoLaunch || false };
@@ -61,14 +59,12 @@ class DropDeskApp {
 
     ipcMain.handle('toggle-auto-launch', async (event, enable) => {
       if (process.platform === 'darwin') {
-        // For macOS, use the built-in login item API
         app.setLoginItemSettings({
           openAtLogin: enable,
-          openAsHidden: true // Start hidden in menu bar
+          openAsHidden: true 
         });
         return { success: true, enabled: enable };
       } else {
-        // For other platforms, save to settings
         try {
           const settings = await this.fileManager.getSettings();
           settings.autoLaunch = enable;
@@ -84,7 +80,6 @@ class DropDeskApp {
   setupAppEvents() {
     app.whenReady().then(() => {
       console.log('App is ready, creating tray...');
-      // Add a small delay to ensure system is ready
       setTimeout(() => {
         tray = createTray(this);
         if (process.platform === 'darwin') {
@@ -113,22 +108,18 @@ class DropDeskApp {
   }
 
   setupIPC() {
-    // File operations
     ipcMain.handle('file-dropped', async (event, filePaths) => {
       try {
         const fileResults = [];
         const folderResults = [];
         
-        // Process each path and determine if it's a file or folder
         for (const filePath of filePaths) {
           try {
             const stats = await fs.stat(filePath);
             if (stats.isDirectory()) {
-              // Process as folder
               const folderInfo = await this.fileManager.processFolder(filePath);
               folderResults.push(folderInfo);
             } else {
-              // Process as file
               const fileInfo = await this.fileManager.processFile(filePath);
               fileResults.push(fileInfo);
             }
@@ -148,12 +139,10 @@ class DropDeskApp {
       }
     });
 
-    // Folder operations (kept for backward compatibility)
     ipcMain.handle('folder-dropped', async (event, folderPaths) => {
       try {
         const results = [];
         for (const folderPath of folderPaths) {
-          // Process the folder itself as a special entry
           const folderInfo = await this.fileManager.processFolder(folderPath);
           results.push(folderInfo);
         }
@@ -164,7 +153,6 @@ class DropDeskApp {
       }
     });
 
-    // Window controls
     ipcMain.handle('minimize-window', () => {
       if (dropWindow) {
         dropWindow.minimize();
@@ -177,7 +165,6 @@ class DropDeskApp {
       }
     });
 
-    // History management
     ipcMain.handle('get-history', async () => {
       try {
         return await this.fileManager.getHistory();
@@ -390,11 +377,10 @@ class DropDeskApp {
     // Save file to specific location
     ipcMain.handle('save-file-to-location', async (event, sourcePath, destinationPath) => {
       try {
-        // Ensure destination directory exists
         const destDir = path.dirname(destinationPath);
         await fs.mkdir(destDir, { recursive: true });
         
-        // Copy file
+
         await fs.copyFile(sourcePath, destinationPath);
         
         return { success: true, path: destinationPath };
@@ -419,17 +405,16 @@ class DropDeskApp {
   }
 }
 
-// Initialize app
+
 const appInstance = new DropDeskApp();
 
-// Prevent multiple instances
 const gotTheLock = app.requestSingleInstanceLock();
 
 if (!gotTheLock) {
   app.quit();
 } else {
   app.on('second-instance', () => {
-    // Someone tried to run a second instance, focus our window instead
+    
     if (dropWindow) {
       if (dropWindow.isMinimized()) dropWindow.restore();
       dropWindow.focus();

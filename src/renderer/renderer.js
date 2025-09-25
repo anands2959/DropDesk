@@ -12,7 +12,6 @@ class DropDeskRenderer {
     await this.updateUI();
     await this.loadTheme();
     
-    // Enable drag and drop on the entire window
     this.enableWindowDragDrop();
   }
 
@@ -32,7 +31,6 @@ class DropDeskRenderer {
   }
 
   enableWindowDragDrop() {
-    // Enable drag and drop on the entire window
     document.addEventListener('dragover', (e) => {
       e.preventDefault();
       e.stopPropagation();
@@ -52,7 +50,6 @@ class DropDeskRenderer {
       e.stopPropagation();
       document.body.classList.remove('drag-over');
       
-      // Get the file paths directly from the dataTransfer
       const files = Array.from(e.dataTransfer.files);
       const filePaths = files.map(file => file.path);
       
@@ -63,7 +60,6 @@ class DropDeskRenderer {
   }
 
   setupEventListeners() {
-    // Window controls
     document.getElementById('minimizeBtn')?.addEventListener('click', () => {
       window.electronAPI.closeWindow();
     });
@@ -72,11 +68,9 @@ class DropDeskRenderer {
       window.electronAPI.quitApp();
     });
 
-    // Global drag and drop handling
     document.addEventListener('dragover', (e) => {
       e.preventDefault();
       e.stopPropagation();
-      // Only add drag-over class if not already on drop zone
       if (!e.target.closest('#dropZone')) {
         document.body.classList.add('drag-over');
       }
@@ -85,7 +79,6 @@ class DropDeskRenderer {
     document.addEventListener('dragleave', (e) => {
       e.preventDefault();
       e.stopPropagation();
-      // Remove drag-over class when leaving the body
       if (e.target === document.documentElement || e.target === document.body) {
         document.body.classList.remove('drag-over');
       }
@@ -94,11 +87,9 @@ class DropDeskRenderer {
     document.addEventListener('drop', (e) => {
       e.preventDefault();
       e.stopPropagation();
-      // Always remove the drag-over class when dropping anywhere
       document.body.classList.remove('drag-over');
     });
 
-    // File handling
     const dropZone = document.getElementById('dropZone');
     const fileInput = document.getElementById('fileInput');
 
@@ -111,19 +102,19 @@ class DropDeskRenderer {
     dropZone?.addEventListener('dragleave', (e) => this.handleDragLeave(e));
     dropZone?.addEventListener('drop', (e) => this.handleDrop(e));
 
-    // Search
+    
     document.getElementById('searchInput')?.addEventListener('input', (e) => this.handleSearch(e));
 
-    // Buttons
+  
     document.getElementById('settingsBtn')?.addEventListener('click', () => this.toggleSettings());
     document.getElementById('exportBtn')?.addEventListener('click', () => this.exportHistory());
     document.getElementById('clearBtn')?.addEventListener('click', () => this.clearHistory());
     document.getElementById('backToMain')?.addEventListener('click', () => this.toggleSettings());
     
-    // Theme
+    
     document.getElementById('theme')?.addEventListener('change', (e) => this.changeTheme(e.target.value));
 
-    // IPC Events
+    
     window.electronAPI.onFilesDroppedOnTray((files) => {
       this.processFiles(files);
     });
@@ -167,10 +158,10 @@ class DropDeskRenderer {
     e.preventDefault();
     e.stopPropagation();
     document.getElementById('dropZone')?.classList.remove('drag-over');
-    // Also remove global drag-over class
+  
     document.body.classList.remove('drag-over');
 
-    // Get the file paths directly from the dataTransfer
+    
     const files = Array.from(e.dataTransfer.files);
     const filePaths = files.map(file => file.path);
     
@@ -203,7 +194,7 @@ class DropDeskRenderer {
       }
     } catch (error) {
       console.error('Error processing files:', error);
-      // Always remove the global drag-over class even on error
+      
       document.body.classList.remove('drag-over');
       this.updateStatus('Error processing files');
     }
@@ -216,7 +207,7 @@ class DropDeskRenderer {
       this.updateStatus('Processing folders...');
       const result = await window.electronAPI.processDroppedFolders(folderPaths);
       
-      // Always remove the global drag-over class after processing
+      
       document.body.classList.remove('drag-over');
       
       if (result.success) {
@@ -228,8 +219,7 @@ class DropDeskRenderer {
         this.updateStatus(`Error: ${result.error}`);
       }
     } catch (error) {
-      console.error('Error processing folders:', error);
-      // Always remove the global drag-over class even on error
+      
       document.body.classList.remove('drag-over');
       this.updateStatus('Error processing folders');
     }
@@ -326,7 +316,7 @@ class DropDeskRenderer {
     fileElement.addEventListener('dragstart', (e) => this.handleDragStart(e, file.originalPath));
     fileElement.addEventListener('dragend', (e) => this.handleDragEnd(e));
 
-    // Action buttons
+
     fileElement.querySelector('.copy-btn')?.addEventListener('click', () => this.copyFileToClipboard(file.originalPath));
     fileElement.querySelector('.open-btn')?.addEventListener('click', () => this.openFile(file.originalPath));
     fileElement.querySelector('.show-btn')?.addEventListener('click', () => this.showInFolder(file.originalPath));
@@ -590,7 +580,7 @@ class DropDeskRenderer {
   }
 }
 
-// Initialize when DOM is loaded
+
 document.addEventListener('DOMContentLoaded', () => {
   new DropDeskRenderer();
 });
