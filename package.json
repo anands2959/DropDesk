@@ -1,0 +1,23 @@
+{
+  "name": "dropdesk",
+  "version": "1.0.0",
+  "description": "Lightweight Electron app for drag & drop file management in system tray",
+  "main": "src/main.js",
+  "homepage": ".",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --dev"
+  },
+  "keywords": [
+    "electron",
+    "drag-drop",
+    "file-manager",
+    "system-tray",
+    "desktop"
+  ],
+  "author": "Anand Sharma",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^26.0.0"
+  }
+}
