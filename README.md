@@ -1,5 +1,7 @@
 # DropDesk
 
+![Logo](images/logo.png)
+
 A lightweight Electron.js desktop application that sits in your system tray, allowing you to easily drag & drop files for quick access to file information and management.
 
 ## Features
@@ -44,6 +46,14 @@ A lightweight Electron.js desktop application that sits in your system tray, all
 3. Drag and drop files into the drop zone or onto the tray icon
 4. Access file operations through the interface
 
+## Platform Support
+
+### Windows
+![Windows](images/windows.jpeg)
+
+### Mac
+![Mac](images/mac.png)
+
 ## Project Structure
 
 ```
@@ -61,6 +71,7 @@ DropDesk/
 ├── data/
 │   ├── history.json         # File history storage
 │   └── settings.json        # User preferences
+├── images/                  # README images
 ├── package.json             # Project configuration
 └── README.md               # This file
 ```
