@@ -49,7 +49,7 @@ A lightweight Electron.js desktop application that sits in your system tray, all
 ## Platform Support
 
 ### Windows
-![Windows](images/windows.jpeg)
+![Windows](images/windows.png)
 
 ### Mac
 ![Mac](images/mac.png)
